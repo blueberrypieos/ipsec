@@ -1,0 +1,4 @@
+debian/build/obj/derived/policy_parse.c
+debian/build/obj/derived/policy_parse.h
+debian/build/obj/derived/policy_token.c
+debian/build/obj/derived/y.tab.h

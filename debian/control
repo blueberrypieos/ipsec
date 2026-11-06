@@ -1,0 +1,18 @@
+Source: libipsec
+Section: libs
+Priority: optional
+Maintainer: Maxwell <maxwell@blueberrypieos.com>
+Build-Depends: pietoolchain (>= 0.1.0), bison, flex
+Standards-Version: 4.7.3
+Homepage: https://github.com/apple-oss-distributions/ipsec
+Vcs-Git: https://github.com/blueberrypieos/ipsec.git -b blueberry-pie-os/latest
+Vcs-Browser: https://github.com/blueberrypieos/ipsec
+Rules-Requires-Root: no
+
+Package: libipsec
+Architecture: darwin-arm64
+Priority: standard
+Depends: libsystem
+Description: IPsec policy library
+ KAME's IPsec policy parser, formatter and error reporting calls,
+ used by ping6 and traceroute6.

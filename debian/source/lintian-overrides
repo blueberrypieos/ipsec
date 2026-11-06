@@ -1,0 +1,4 @@
+superfluous-file-pattern debian/build/obj/derived/policy_parse.c [debian/copyright:*]
+superfluous-file-pattern debian/build/obj/derived/policy_parse.h [debian/copyright:*]
+superfluous-file-pattern debian/build/obj/derived/policy_token.c [debian/copyright:*]
+superfluous-file-pattern debian/build/obj/derived/y.tab.h [debian/copyright:*]

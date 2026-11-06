@@ -1,0 +1,1 @@
+#define HAVE_NETINET6_IPSEC 1

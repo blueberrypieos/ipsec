@@ -1,0 +1,43 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+
+include /usr/share/pietoolchain/rules.mk
+
+S       := $(SRCROOT)/ipsec-tools/libipsec
+DERIVED := $(OBJ)/derived
+OBJS    := $(OBJ)/ipsec_dump_policy.o $(OBJ)/ipsec_get_policylen.o $(OBJ)/ipsec_strerror.o \
+	$(OBJ)/policy_parse.o $(OBJ)/policy_token.o
+DYLIB   := $(OBJ)/libipsec.A.dylib
+FLAGS   := $(BASE_CFLAGS) -DHAVE_CONFIG_H=1 -I$(S) -I$(CURDIR)/debian -I$(SRCROOT)/ipsec-tools/Common \
+	-I$(SRCROOT)/ipsec-tools/racoon
+
+all: $(DYLIB)
+
+$(DERIVED)/policy_parse.c: $(S)/policy_parse.y
+	@mkdir -p $(DERIVED)
+	bison -y -d -p __libipsec -o $@ $<
+	cp $(DERIVED)/policy_parse.h $(DERIVED)/y.tab.h
+$(DERIVED)/policy_token.c: $(S)/policy_token.l $(DERIVED)/policy_parse.c
+	flex -P__libipsec -o $@ $<
+
+$(OBJ)/%.o: $(S)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(FLAGS) -c $< -o $@
+$(OBJ)/%.o: $(DERIVED)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(FLAGS) -c $< -o $@
+
+$(DYLIB): $(OBJS)
+	$(CC) $(BASE_LDFLAGS) -dynamiclib -install_name /usr/lib/libipsec.A.dylib \
+		-compatibility_version 1 -current_version 300 $(OBJS) -o $@
+
+install: $(DYLIB)
+	install -d $(ROOT)/usr/lib $(ROOT)/usr/share/man/man3
+	install -m 755 $(DYLIB) $(ROOT)/usr/lib/
+	ln -sf libipsec.A.dylib $(ROOT)/usr/lib/libipsec.dylib
+	install -m 444 $(S)/ipsec_set_policy.3 $(S)/ipsec_strerror.3 $(ROOT)/usr/share/man/man3/
+	ln -sf ipsec_set_policy.3 $(ROOT)/usr/share/man/man3/ipsec_dump_policy.3
+	ln -sf ipsec_set_policy.3 $(ROOT)/usr/share/man/man3/ipsec_get_policylen.3
+
+.PHONY: install
